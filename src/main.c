@@ -1,10 +1,15 @@
 #include <stdio.h>
+#include <stdint.h>
 #include <stdbool.h>
 #include <SDL2/SDL.h>
 
+bool is_running = false;
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
-bool isRunning = false;
+
+uint32_t* color_buffer = NULL;
+int window_width = 800;
+int window_height = 600;
 
 bool initialize_window(void)
 {
@@ -14,7 +19,7 @@ bool initialize_window(void)
         return false;
     }
     // Create a SDL Window
-    window = SDL_CreateWindow(NULL, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_BORDERLESS);
+    window = SDL_CreateWindow(NULL, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window_width, window_height, SDL_WINDOW_BORDERLESS);
 
     if (!window)
     {
@@ -34,6 +39,7 @@ bool initialize_window(void)
 
 void setup(void)
 {
+    color_buffer = (uint32_t*)malloc(sizeof(uint32_t) * window_width * window_height);
 }
 
 void process_input(void)
@@ -43,13 +49,13 @@ void process_input(void)
     switch (event.type)
     {
     case SDL_QUIT:
-        isRunning = false;
+        is_running = false;
         break;
 
     case SDL_KEYDOWN:
         if (event.key.keysym.sym == SDLK_ESCAPE)
         {
-            isRunning = false;
+            is_running = false;
         }
 
     default:
@@ -59,6 +65,7 @@ void process_input(void)
 
 void update(void)
 {
+
 }
 
 void render(void)
@@ -69,17 +76,26 @@ void render(void)
     SDL_RenderPresent(renderer);
 }
 
+void destroy_window(void)
+{
+    free(color_buffer);
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+}
+
 int main(int argc, char *args[])
 {
-    isRunning = initialize_window();
+    is_running = initialize_window();
 
     setup();
 
-    while (isRunning)
+    while (is_running)
     {
         process_input();
         update();
         render();
     }
+    destroy_window();
     return 0;
 }
