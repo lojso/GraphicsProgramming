@@ -1,5 +1,5 @@
 build:
-	gcc -Wfatal-errors \
+	gcc -Wall \
 	-std=c99 \
 	./src/*.c \
 	-I"C:\_Tools\libsdl\include" \
