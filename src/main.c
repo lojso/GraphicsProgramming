@@ -10,6 +10,7 @@
 vec3_t cube_points[N_POINTS];
 vec2_t projected_points[N_POINTS];
 bool is_running = false;
+int previous_frame_time = 0;
 float fov_factor = 640;
 vec3_t camera_position = {0, 0, -5};
 vec3_t cube_rotation = {0, 0, 0};
@@ -65,9 +66,16 @@ void process_input(void)
 
 void update(void)
 {
-    cube_rotation.x += 0.005;
-    cube_rotation.y += 0.005;
-    cube_rotation.z += 0.005;
+    int time_to_wait = FRAME_TARGET_TIME - (SDL_GetTicks() - previous_frame_time);
+    if(time_to_wait > 0 && time_to_wait <= FRAME_TARGET_TIME){
+        SDL_Delay(time_to_wait);
+    }
+
+    previous_frame_time = SDL_GetTicks();
+
+    cube_rotation.x += 0.01;
+    cube_rotation.y += 0.01;
+    cube_rotation.z += 0.01;
 
     for (int i = 0; i < N_POINTS; i++)
     {
