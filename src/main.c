@@ -28,7 +28,8 @@ void setup(void)
     color_buffer = (uint32_t *)malloc(sizeof(uint32_t) * window_width * window_height);
     color_buffer_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, window_width, window_height);
 
-    load_cube_mesh_data();
+    //load_cube_mesh_data();
+    load_obj_file_data("./assets/f22.obj");
 }
 
 void process_input(void)
@@ -54,16 +55,15 @@ void process_input(void)
 
 void update(void)
 {
-    while (!SDL_TICKS_PASSED(SDL_GetTicks(), previous_frame_time + FRAME_TARGET_TIME))
-        ;
+    while (!SDL_TICKS_PASSED(SDL_GetTicks(), previous_frame_time + FRAME_TARGET_TIME));
 
     previous_frame_time = SDL_GetTicks();
 
     triangles_to_render = NULL;
 
     mesh.rotation.x += 0.01;
-    mesh.rotation.y += 0.01;
-    mesh.rotation.z += 0.01;
+    mesh.rotation.y += 0.00;
+    mesh.rotation.z += 0.00;
 
     int num_faces = array_length(mesh.faces);
     for (int i = 0; i < num_faces; i++)
@@ -142,6 +142,8 @@ int main(int argc, char *args[])
         update();
         render();
     }
+
+
 
     destroy_window();
     free_resources();
