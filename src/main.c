@@ -10,7 +10,7 @@
 triangle_t *triangles_to_render = NULL;
 
 float fov_factor = 640;
-vec3_t camera_position = {0, 0, -5};
+vec3_t camera_position = {0, 0, 0};
 
 bool is_running = false;
 int previous_frame_time = 0;
@@ -28,8 +28,7 @@ void setup(void)
     color_buffer = (uint32_t *)malloc(sizeof(uint32_t) * window_width * window_height);
     color_buffer_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, window_width, window_height);
 
-    //load_cube_mesh_data();
-    load_obj_file_data("./assets/f22.obj");
+    load_obj_file_data("./assets/cube.obj");
 }
 
 void process_input(void)
@@ -55,15 +54,16 @@ void process_input(void)
 
 void update(void)
 {
-    while (!SDL_TICKS_PASSED(SDL_GetTicks(), previous_frame_time + FRAME_TARGET_TIME));
+    while (!SDL_TICKS_PASSED(SDL_GetTicks(), previous_frame_time + FRAME_TARGET_TIME))
+        ;
 
     previous_frame_time = SDL_GetTicks();
 
     triangles_to_render = NULL;
 
     mesh.rotation.x += 0.01;
-    mesh.rotation.y += 0.00;
-    mesh.rotation.z += 0.00;
+    mesh.rotation.y += 0.01;
+    mesh.rotation.z += 0.01;
 
     int num_faces = array_length(mesh.faces);
     for (int i = 0; i < num_faces; i++)
@@ -76,18 +76,49 @@ void update(void)
 
         triangle_t projected_triangle;
 
+        vec3_t transformed_vertices[3];
+
+        // Transform vertices
         for (int j = 0; j < 3; j++)
         {
             vec3_t transformed_vertex = face_verticies[j];
 
+            // Constant rotation
             transformed_vertex = vec3_rotate_x(transformed_vertex, mesh.rotation.x);
             transformed_vertex = vec3_rotate_y(transformed_vertex, mesh.rotation.y);
             transformed_vertex = vec3_rotate_z(transformed_vertex, mesh.rotation.z);
 
             //Translate vertex from camera;
-            transformed_vertex.z -= camera_position.z;
+            transformed_vertex.z += 5;
 
-            vec2_t projected_point = project(transformed_vertex);
+            transformed_vertices[j] = transformed_vertex;
+        }
+
+        //TODO: Backface culling check
+        vec3_t vector_a = transformed_vertices[0];
+        vec3_t vector_b = transformed_vertices[1];
+        vec3_t vector_c = transformed_vertices[2];
+
+        vec3_t vector_ab = vec3_sub(vector_b, vector_a);
+        vec3_t vector_ac = vec3_sub(vector_c, vector_a);
+        vec3_t normal = vec3_cross(vector_ab, vector_ac);
+
+        vec3_t camera_ray = vec3_sub(camera_position, vector_a);
+
+        float dot_product = vec3_dot(camera_ray, normal);
+
+        if(dot_product < 0){
+            // Not projecting face
+            // And not pushing it to render
+            // If face looks away from camera
+            continue;   
+        }
+
+        // Project vertextes on camera frustrum
+        for (int j = 0; j < 3; j++)
+        {
+
+            vec2_t projected_point = project(transformed_vertices[j]);
 
             projected_point.x += window_width / 2;
             projected_point.y += window_height / 2;
@@ -142,8 +173,6 @@ int main(int argc, char *args[])
         update();
         render();
     }
-
-
 
     destroy_window();
     free_resources();
