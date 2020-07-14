@@ -170,7 +170,7 @@ void update(void)
 void render(void)
 {
     draw_grid();
-    
+
     int number_of_triangles = array_length(triangles_to_render);
     for (int i = 0; i < number_of_triangles; i++)
     {
@@ -182,7 +182,7 @@ void render(void)
             draw_filled_triangle(triangle.points[0].x, triangle.points[0].y,
                                  triangle.points[1].x, triangle.points[1].y,
                                  triangle.points[2].x, triangle.points[2].y,
-                                 0xFFFFFFFF);
+                                 0xFF555555);
         }
 
         if (render_method == RENDER_WIRE ||
@@ -192,14 +192,14 @@ void render(void)
             draw_triangle(triangle.points[0].x, triangle.points[0].y,
                           triangle.points[1].x, triangle.points[1].y,
                           triangle.points[2].x, triangle.points[2].y,
-                          0xFF00FF00);
+                          0xFFFFFFFF);
         }
 
         if (render_method == RENDER_WIRE_VERTEX)
         {
-            draw_rectangle(triangle.points[0].x, triangle.points[0].y, 3, 3, 0xFFFFFF00);
-            draw_rectangle(triangle.points[1].x, triangle.points[1].y, 3, 3, 0xFFFFFF00);
-            draw_rectangle(triangle.points[2].x, triangle.points[2].y, 3, 3, 0xFFFFFF00);
+            draw_rectangle(triangle.points[0].x-3, triangle.points[0].y-3, 6, 6, 0xFFFF0000);
+            draw_rectangle(triangle.points[1].x-3, triangle.points[1].y-3, 6, 6, 0xFFFF0000);
+            draw_rectangle(triangle.points[2].x-3, triangle.points[2].y-3, 6, 6, 0xFFFF0000);
         }
     }
 
