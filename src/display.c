@@ -71,7 +71,7 @@ void draw_line_vec2(vec2_t p0, vec2_t p1, uint32_t color){
     float current_x = p0.x;
     float current_y = p0.y;
     
-    for (int i = 0; i < longest_side_length; i++)
+    for (int i = 0; i <= longest_side_length; i++)
     {
         draw_pixel(round(current_x), round(current_y), color);
         current_x += x_inc;
