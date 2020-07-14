@@ -169,6 +169,8 @@ void update(void)
 
 void render(void)
 {
+    draw_grid();
+    
     int number_of_triangles = array_length(triangles_to_render);
     for (int i = 0; i < number_of_triangles; i++)
     {
