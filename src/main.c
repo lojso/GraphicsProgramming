@@ -34,7 +34,8 @@ void setup(void)
                                              SDL_TEXTUREACCESS_STREAMING,
                                              window_width, window_height);
 
-    load_obj_file_data("./assets/cube.obj");
+    load_cube_mesh_data();
+    //load_obj_file_data("./assets/cube.obj");
 }
 
 void process_input(void)
@@ -104,8 +105,6 @@ void update(void)
         face_verticies[1] = mesh.vertices[mesh_face.b - 1];
         face_verticies[2] = mesh.vertices[mesh_face.c - 1];
 
-        triangle_t projected_triangle;
-
         vec3_t transformed_vertices[3];
 
         // Transform vertices
@@ -152,17 +151,25 @@ void update(void)
             }
         }
 
+        vec2_t projected_points[3];
+
         // Project vertextes on camera frustrum
         for (int j = 0; j < 3; j++)
         {
+            projected_points[j] = project(transformed_vertices[j]);
 
-            vec2_t projected_point = project(transformed_vertices[j]);
-
-            projected_point.x += window_width / 2;
-            projected_point.y += window_height / 2;
-
-            projected_triangle.points[j] = projected_point;
+            projected_points[j].x += window_width / 2;
+            projected_points[j].y += window_height / 2;
         }
+
+        triangle_t projected_triangle = {
+            .points = {
+                {projected_points[0].x, projected_points[0].y},
+                {projected_points[1].x, projected_points[1].y},
+                {projected_points[2].x, projected_points[2].y},
+            },
+            .color = mesh_face.color};
+
         array_push(triangles_to_render, projected_triangle);
     }
 }
@@ -182,7 +189,7 @@ void render(void)
             draw_filled_triangle(triangle.points[0].x, triangle.points[0].y,
                                  triangle.points[1].x, triangle.points[1].y,
                                  triangle.points[2].x, triangle.points[2].y,
-                                 0xFF555555);
+                                 triangle.color);
         }
 
         if (render_method == RENDER_WIRE ||
@@ -197,9 +204,9 @@ void render(void)
 
         if (render_method == RENDER_WIRE_VERTEX)
         {
-            draw_rectangle(triangle.points[0].x-3, triangle.points[0].y-3, 6, 6, 0xFFFF0000);
-            draw_rectangle(triangle.points[1].x-3, triangle.points[1].y-3, 6, 6, 0xFFFF0000);
-            draw_rectangle(triangle.points[2].x-3, triangle.points[2].y-3, 6, 6, 0xFFFF0000);
+            draw_rectangle(triangle.points[0].x - 3, triangle.points[0].y - 3, 6, 6, 0xFFFF0000);
+            draw_rectangle(triangle.points[1].x - 3, triangle.points[1].y - 3, 6, 6, 0xFFFF0000);
+            draw_rectangle(triangle.points[2].x - 3, triangle.points[2].y - 3, 6, 6, 0xFFFF0000);
         }
     }
 
