@@ -141,3 +141,13 @@ vec3_t vec3_rotate_z(vec3_t v, float angle)
         .z = v.z};
     return rotated_vector;
 }
+
+vec3_t vec3_from_vec4(vec4_t v){
+    vec3_t result = {v.x, v.y, v.z};
+    return result;
+}
+
+vec4_t vec4_from_vec3(vec3_t v){
+    vec4_t result = {v.x, v.y, v.z, 1.0};
+    return result;
+}
