@@ -100,7 +100,11 @@ void update(void)
     mesh.scale.x += 0.002;
     mesh.scale.y += 0.001;
 
+    mesh.translation.x += 0.01;
+    mesh.translation.z = 5.0;
+
     mat4_t scale_matrix = mat4_make_scale(mesh.scale.x, mesh.scale.y, mesh.scale.z);
+    mat4_t translation_matrix = mat4_make_translation(mesh.translation.x, mesh.translation.y, mesh.translation.z);
 
     int num_faces = array_length(mesh.faces);
     for (int i = 0; i < num_faces; i++)
@@ -120,14 +124,13 @@ void update(void)
 
             // Scale with matrix;
             transformed_vertex = mat4_mul_vec4(scale_matrix, transformed_vertex);
+            transformed_vertex = mat4_mul_vec4(translation_matrix, transformed_vertex);
 
             // Constant rotation
             // transformed_vertex = vec3_rotate_x(transformed_vertex, mesh.rotation.x);
             // transformed_vertex = vec3_rotate_y(transformed_vertex, mesh.rotation.y);
             // transformed_vertex = vec3_rotate_z(transformed_vertex, mesh.rotation.z);
 
-            //Translate vertex from camera;
-            transformed_vertex.z += 5;
 
             transformed_vertices[j] = transformed_vertex;
         }
