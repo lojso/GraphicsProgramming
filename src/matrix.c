@@ -82,7 +82,7 @@ mat4_t mat4_make_perspective(float fov, float aspect, float znear, float zfar)
 
 vec4_t mat4_mul_vec4_project(mat4_t mat_proj, vec4_t v)
 {
-    vec4_t result = mat4_mul_vec4_project(mat_proj, v);
+    vec4_t result = mat4_mul_vec4(mat_proj, v);
     if (result.w != 0.0)
     {
         result.x /= result.w;

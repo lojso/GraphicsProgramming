@@ -168,7 +168,6 @@ void update(void)
         // Project vertextes on camera frustrum
         for (int j = 0; j < 3; j++)
         {
-            //projected_points[j] = project(vec3_from_vec4(transformed_vertices[j]));
             projected_points[j] = mat4_mul_vec4_project(proj_matrix, transformed_vertices[j]);
 
             // Scale into the view
