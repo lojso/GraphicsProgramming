@@ -10,19 +10,11 @@
 
 triangle_t *triangles_to_render = NULL;
 
-float fov_factor = 640;
 vec3_t camera_position = {0, 0, 0};
+mat4_t proj_matrix;
 
 bool is_running = false;
 int previous_frame_time = 0;
-
-vec2_t project(vec3_t point)
-{
-    vec2_t projected_point = {
-        .x = fov_factor * point.x / point.z,
-        .y = fov_factor * point.y / point.z};
-    return projected_point;
-}
 
 void setup(void)
 {
@@ -34,7 +26,12 @@ void setup(void)
                                              SDL_PIXELFORMAT_ARGB8888,
                                              SDL_TEXTUREACCESS_STREAMING,
                                              window_width, window_height);
-
+    float fov = M_PI / 3;
+    float aspect = (float) window_height / window_width;
+    float znear = 0.1;
+    float zfar = 100.0;
+    proj_matrix = mat4_make_perspective(fov, aspect, znear, zfar);
+    
     load_cube_mesh_data();
     //load_obj_file_data("./assets/cube.obj");
 }
@@ -94,13 +91,13 @@ void update(void)
     triangles_to_render = NULL;
 
     mesh.rotation.x += 0.01;
-    mesh.rotation.y += 0.01;
-    mesh.rotation.z += 0.01;
+    // mesh.rotation.y += 0.01;
+    // mesh.rotation.z += 0.01;
 
-    mesh.scale.x += 0.002;
-    mesh.scale.y += 0.001;
+    // mesh.scale.x += 0.002;
+    // mesh.scale.y += 0.001;
 
-    mesh.translation.x += 0.01;
+    // mesh.translation.x += 0.01;
     mesh.translation.z = 5.0;
 
     mat4_t scale_matrix = mat4_make_scale(mesh.scale.x, mesh.scale.y, mesh.scale.z);
@@ -166,15 +163,21 @@ void update(void)
             }
         }
 
-        vec2_t projected_points[3];
+        vec4_t projected_points[3];
 
         // Project vertextes on camera frustrum
         for (int j = 0; j < 3; j++)
         {
-            projected_points[j] = project(vec3_from_vec4(transformed_vertices[j]));
+            //projected_points[j] = project(vec3_from_vec4(transformed_vertices[j]));
+            projected_points[j] = mat4_mul_vec4_project(proj_matrix, transformed_vertices[j]);
 
-            projected_points[j].x += window_width / 2;
-            projected_points[j].y += window_height / 2;
+            // Scale into the view
+            projected_points[j].x *= (window_width / 2);
+            projected_points[j].y *= (window_height / 2);
+
+            // Translate into center of the screen
+            projected_points[j].x += (window_width / 2);
+            projected_points[j].y += (window_height / 2);
         }
 
         float avg_depth = (transformed_vertices[0].z +
@@ -279,3 +282,11 @@ int main(int argc, char *args[])
 
     return 0;
 }
+
+
+
+/////////////////////////
+/////////////////////////
+//// 
+/////////////////////////
+/////////////////////////
