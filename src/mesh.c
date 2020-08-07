@@ -10,7 +10,7 @@ mesh_t mesh = {
     .rotation = {0, 0, 0},
     .scale = {1.0, 1.0, 1.0},
     .translation = {0, 0, 0},
-    };
+};
 
 vec3_t cube_vertices[N_CUBE_VERTICES] = {
     {.x = -1, .y = -1, .z = -1},
@@ -23,23 +23,23 @@ vec3_t cube_vertices[N_CUBE_VERTICES] = {
     {.x = -1, .y = -1, .z = 1}};
 
 face_t cube_faces[N_CUBE_FACES] = {
-    {.a = 1, .b = 2, .c = 3, .color = 0xFFFF0000},
-    {.a = 1, .b = 3, .c = 4, .color = 0xFFFF0000},
+    {.a = 1, .b = 2, .c = 3, .color = 0xFFFFFFFF},
+    {.a = 1, .b = 3, .c = 4, .color = 0xFFFFFFFF},
 
-    {.a = 4, .b = 3, .c = 5, .color = 0xFF00FF00},
-    {.a = 4, .b = 5, .c = 6, .color = 0xFF00FF00},
+    {.a = 4, .b = 3, .c = 5, .color = 0xFFFFFFFF},
+    {.a = 4, .b = 5, .c = 6, .color = 0xFFFFFFFF},
 
-    {.a = 6, .b = 5, .c = 7, .color = 0xFF0000FF},
-    {.a = 6, .b = 7, .c = 8, .color = 0xFF0000FF},
+    {.a = 6, .b = 5, .c = 7, .color = 0xFFFFFFFF},
+    {.a = 6, .b = 7, .c = 8, .color = 0xFFFFFFFF},
 
-    {.a = 8, .b = 7, .c = 2, .color = 0xFFFFFF00},
-    {.a = 8, .b = 2, .c = 1, .color = 0xFFFFFF00},
+    {.a = 8, .b = 7, .c = 2, .color = 0xFFFFFFFF},
+    {.a = 8, .b = 2, .c = 1, .color = 0xFFFFFFFF},
 
-    {.a = 2, .b = 7, .c = 5, .color = 0xFFFF00FF},
-    {.a = 2, .b = 5, .c = 3, .color = 0xFFFF00FF},
+    {.a = 2, .b = 7, .c = 5, .color = 0xFFFFFFFF},
+    {.a = 2, .b = 5, .c = 3, .color = 0xFFFFFFFF},
 
-    {.a = 6, .b = 8, .c = 1, .color = 0xFF00FFFF},
-    {.a = 6, .b = 1, .c = 4, .color = 0xFF00FFFF},
+    {.a = 6, .b = 8, .c = 1, .color = 0xFFFFFFFF},
+    {.a = 6, .b = 1, .c = 4, .color = 0xFFFFFFFF},
 };
 
 void load_obj_file_data(char *filename)
@@ -70,7 +70,8 @@ void load_obj_file_data(char *filename)
             face_t face = {
                 .a = vertex_indices[0],
                 .b = vertex_indices[1],
-                .c = vertex_indices[2]};
+                .c = vertex_indices[2],
+                .color = 0xFFFFFFFF};
             array_push(mesh.faces, face);
         }
     }
