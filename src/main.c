@@ -92,7 +92,7 @@ void update(void)
 
     triangles_to_render = NULL;
 
-    mesh.rotation.x += 0.01;
+    //mesh.rotation.x += 0.01;
     // mesh.rotation.y += 0.01;
     // mesh.rotation.z += 0.01;
 
@@ -137,26 +137,30 @@ void update(void)
             transformed_vertices[j] = transformed_vertex;
         }
 
-        //Backface culling check
-        vec3_t vector_a = vec3_from_vec4(transformed_vertices[0]);
-        vec3_t vector_b = vec3_from_vec4(transformed_vertices[1]);
-        vec3_t vector_c = vec3_from_vec4(transformed_vertices[2]);
+        // Get individual vectors from A, B, and C vertices to compute normal
+        vec3_t vector_a = vec3_from_vec4(transformed_vertices[0]); /*   A   */
+        vec3_t vector_b = vec3_from_vec4(transformed_vertices[1]); /*  / \  */
+        vec3_t vector_c = vec3_from_vec4(transformed_vertices[2]); /* C---B */
 
+        // Get the vector subtraction of B-A and C-A
         vec3_t vector_ab = vec3_sub(vector_b, vector_a);
         vec3_t vector_ac = vec3_sub(vector_c, vector_a);
         vec3_normalize(&vector_ab);
         vec3_normalize(&vector_ac);
 
+        // Compute the face normal (using cross product to find perpendicular)
         vec3_t normal = vec3_cross(vector_ab, vector_ac);
         vec3_normalize(&normal);
 
+        // Find the vector between vertex A in the triangle and the camera origin
         vec3_t camera_ray = vec3_sub(camera_position, vector_a);
 
-        float dot_product = vec3_dot(camera_ray, normal);
+        // Calculate how aligned the camera ray is with the face normal (using dot product)
+        float dot_normal_camera = vec3_dot(normal, camera_ray);
 
         if (cull_method == CULL_BACKFACE)
         {
-            if (dot_product < 0)
+            if (dot_normal_camera < 0)
             {
                 // Not projecting face
                 // And not pushing it to render
@@ -175,6 +179,9 @@ void update(void)
             // Scale into the view
             projected_points[j].x *= (window_width / 2);
             projected_points[j].y *= (window_height / 2);
+
+            // Invert the y value to account for flipped screen y coordinate
+            projected_points[j].y *= -1;
 
             // Translate into center of the screen
             projected_points[j].x += (window_width / 2);
